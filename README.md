@@ -17,6 +17,26 @@
 go build -o subbox .
 ```
 
+## Linux installation
+
+Install system-wide (default: `/usr/local/bin/subbox`):
+
+```bash
+./scripts/install-linux.sh
+```
+
+Install for current user (no sudo):
+
+```bash
+BINDIR="$HOME/.local/bin" ./scripts/install-linux.sh
+```
+
+Uninstall:
+
+```bash
+./scripts/uninstall-linux.sh
+```
+
 ## Структура проекта
 
 ```text
