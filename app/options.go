@@ -42,6 +42,9 @@ type options struct {
 	probeTimeout  time.Duration
 	probeWorkers  int
 	healthCheck   bool
+	skipRTT       bool
+	skipHTTP      bool
+	skipTests     bool
 	healthURL     string
 	healthTimeout time.Duration
 	healthWorkers int
@@ -76,6 +79,9 @@ func parseFlags() options {
 	flag.DurationVar(&opts.probeTimeout, "probe-timeout", 1500*time.Millisecond, "таймаут RTT теста")
 	flag.IntVar(&opts.probeWorkers, "probe-workers", 12, "количество параллельных RTT тестов")
 	flag.BoolVar(&opts.healthCheck, "health-check", true, "выполнять HTTP-проверку каждого конфига перед меню")
+	flag.BoolVar(&opts.skipRTT, "skip-rtt", false, "пропустить RTT тест перед меню")
+	flag.BoolVar(&opts.skipHTTP, "skip-http", false, "пропустить HTTP тест перед меню")
+	flag.BoolVar(&opts.skipTests, "skip-tests", false, "пропустить все тесты перед меню (RTT и HTTP)")
 	flag.StringVar(&opts.healthURL, "health-url", defaultHealthURL, "URL для HTTP-проверки через каждый конфиг")
 	flag.DurationVar(&opts.healthTimeout, "health-timeout", 8*time.Second, "таймаут HTTP-проверки одного конфига")
 	flag.IntVar(&opts.healthWorkers, "health-workers", 3, "количество параллельных HTTP-проверок")
@@ -86,6 +92,14 @@ func parseFlags() options {
 	flag.BoolVar(&opts.keepConfig, "keep-config", false, "не удалять временный конфиг после завершения")
 	flag.BoolVar(&opts.skipCheck, "skip-check", false, "не выполнять sing-box check перед запуском")
 	flag.Parse()
+
+	if opts.skipTests {
+		opts.skipRTT = true
+		opts.skipHTTP = true
+	}
+	if opts.skipHTTP {
+		opts.healthCheck = false
+	}
 
 	return opts
 }

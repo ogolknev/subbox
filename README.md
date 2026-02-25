@@ -94,10 +94,18 @@ sudo ./subbox --tun
 
 ## Полезные флаги
 
-URL подписки:
+URL подписки (обязательно берите URL в кавычки, если в нем есть `#`):
 
 ```bash
-./subbox --url 'https://example.com/subscription'
+./subbox --url 'https://example.com/subscription#name'
+```
+
+Пропуск тестов перед меню:
+
+```bash
+./subbox --skip-tests --url 'https://example.com/subscription#name'
+# или отдельно
+./subbox --skip-rtt --skip-http --url 'https://example.com/subscription#name'
 ```
 
 Или через переменную окружения:

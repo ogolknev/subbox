@@ -86,20 +86,21 @@ func validateOptions(opts *options) error {
 	if opts.mixedPort < 1 || opts.mixedPort > 65535 {
 		return fmt.Errorf("неверный порт mixed inbound: %d", opts.mixedPort)
 	}
-	if opts.probeTimeout <= 0 {
-		return fmt.Errorf("неверный probe-timeout: %s", opts.probeTimeout)
+	if !opts.skipRTT {
+		if opts.probeTimeout <= 0 {
+			return fmt.Errorf("неверный probe-timeout: %s", opts.probeTimeout)
+		}
+		if opts.probeWorkers < 1 {
+			return fmt.Errorf("неверный probe-workers: %d", opts.probeWorkers)
+		}
 	}
-	if opts.probeWorkers < 1 {
-		return fmt.Errorf("неверный probe-workers: %d", opts.probeWorkers)
-	}
-	if opts.healthTimeout <= 0 {
-		return fmt.Errorf("неверный health-timeout: %s", opts.healthTimeout)
-	}
-	if opts.healthWorkers < 1 {
-		return fmt.Errorf("неверный health-workers: %d", opts.healthWorkers)
-	}
-
-	if opts.healthCheck {
+	if opts.healthCheck && !opts.skipHTTP {
+		if opts.healthTimeout <= 0 {
+			return fmt.Errorf("неверный health-timeout: %s", opts.healthTimeout)
+		}
+		if opts.healthWorkers < 1 {
+			return fmt.Errorf("неверный health-workers: %d", opts.healthWorkers)
+		}
 		healthURL := strings.TrimSpace(opts.healthURL)
 		if healthURL == "" {
 			return errors.New("health-url не может быть пустым, когда health-check включен")

@@ -22,16 +22,22 @@ func chooseEntry(entries []proxyEntry, opts options) (proxyEntry, error) {
 		return entries[opts.selectedIndex-1], nil
 	}
 
-	fmt.Printf("RTT тест %d конфигов...\n", len(entries))
-	probeEntriesRTT(entries, opts.probeTimeout, opts.probeWorkers)
-
-	if opts.healthCheck {
-		fmt.Printf("HTTP тест %d конфигов...\n", len(entries))
-		probeEntriesHTTP(entries, opts)
+	if !opts.skipRTT {
+		fmt.Printf("RTT тест %d конфигов...\n", len(entries))
+		probeEntriesRTT(entries, opts.probeTimeout, opts.probeWorkers)
+	} else {
+		fmt.Println("RTT тест пропущен (--skip-rtt/--skip-tests)")
 	}
 
-	sortEntries(entries, opts.healthCheck)
-	if opts.healthCheck {
+	if opts.healthCheck && !opts.skipHTTP {
+		fmt.Printf("HTTP тест %d конфигов...\n", len(entries))
+		probeEntriesHTTP(entries, opts)
+	} else {
+		fmt.Println("HTTP тест пропущен (--skip-http/--skip-tests/--health-check=false)")
+	}
+
+	sortEntries(entries, opts.healthCheck && !opts.skipHTTP)
+	if opts.healthCheck && !opts.skipHTTP {
 		fmt.Println("Сортировка: сначала HTTP OK, затем по RTT")
 	}
 
