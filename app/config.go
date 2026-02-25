@@ -48,14 +48,15 @@ func buildSingBoxConfig(proxyOutbound map[string]any, opts options) map[string]a
 		}
 
 		inbounds := []any{map[string]any{
-			"type":           "tun",
-			"tag":            "tun-in",
-			"interface_name": opts.tunName,
-			"address":        splitCSV(opts.tunAddress),
-			"mtu":            opts.tunMTU,
-			"auto_route":     true,
-			"strict_route":   policy.strictRoute,
-			"stack":          opts.tunStack,
+			"type":                  "tun",
+			"tag":                   "tun-in",
+			"interface_name":        opts.tunName,
+			"address":               splitCSV(opts.tunAddress),
+			"mtu":                   opts.tunMTU,
+			"auto_route":            true,
+			"strict_route":          policy.strictRoute,
+			"stack":                 opts.tunStack,
+			"route_exclude_address": []string{"127.0.0.0/8", "::1/128"},
 		}}
 		if policy.autoRedirect {
 			tunInbound := inbounds[0].(map[string]any)
